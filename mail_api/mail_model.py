@@ -7,7 +7,6 @@ T = TypeVar("T", bound=BaseModel)
 
 
 class Updates(BaseModel):
-    is_relevant_to_specific_application: bool
     company_name: str
     job_title: str | None
     reference_number: str | None
@@ -54,18 +53,25 @@ class E_Mail(BaseModel):
         Determine if the email is relevant to job applications or hiring processes.
         """
 
-        instructions = "Classify whether this email is about a job application or hiring process. " "If uncertain, return true."
+        instructions = """
+Return true only if this email clearly refers to a specific job application the user has already submitted.
+
+Return false for job suggestions, job alerts, recommendations, newsletters, generic job ads, networking, recruiter marketing, and career tips.
+
+A suggested job is never an existing application.
+If uncertain, return false.
+"""
 
         class App_Relevant(BaseModel):
             is_relevant: bool
 
-        response = run_structured_prompt(App_Relevant, prompt=f"Subject: {self.subject}", instructions=instructions)
+        response = run_structured_prompt(App_Relevant, prompt=f"Subject: {self.subject}, Body: {self.body}, Sender: {self.sender}, Date: {self.date}", instructions=instructions)
 
         return response.is_relevant
 
     def classify(self):
         instructions = (
-            "Extract the most relevant and recent information from this email regarding job application. Mark job suggestions, networking, or unrelated content as not relevant."
+            "Extract the most relevant and recent information from this email regarding the job application."
         )
 
         print(f"Classifying email")

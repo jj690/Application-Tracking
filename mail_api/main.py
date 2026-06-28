@@ -15,10 +15,9 @@ app = FastAPI()
 def classify_email_post(email: E_Mail):
     if email.is_possibly_relevant():
         classification = email.classify()
-        if classification.is_relevant_to_specific_application:
-            with psycopg.connect(os.getenv("DATABASE_URL")) as db_connection:
-                db_handler = SQLHandler(db_connection)
-                db_handler.insert_email(classification)
+        with psycopg.connect(os.getenv("DATABASE_URL")) as db_connection:
+            db_handler = SQLHandler(db_connection)
+            db_handler.insert_email(classification)
 
 
 @app.get("/api/database")
