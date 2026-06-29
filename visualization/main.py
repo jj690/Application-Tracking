@@ -30,6 +30,6 @@ if st.button("Refresh"):
     st.rerun()
 st.write("Total Emails:", len(df))
 
-fig = data_handler.create_scatter_plot(df.sort_values(by="Company", ascending=True))
+fig = data_handler.create_scatter_plot(df)
 st.plotly_chart(fig, width="stretch")
 

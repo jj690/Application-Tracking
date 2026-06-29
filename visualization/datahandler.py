@@ -40,6 +40,10 @@ class DataHandler:
             yaxis_title="Company",
             height=500,
         )
+        fig.update_yaxes(
+        categoryorder="array",
+        categoryarray=sorted(df["company_name"].dropna().unique(), reverse=True)
+        )
         return fig
     
     @staticmethod
