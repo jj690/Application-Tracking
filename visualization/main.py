@@ -9,9 +9,10 @@ st.title("Email Database")
 st.text_input("Search by Company Name", key="search_company")
 st.text_input("Search by Update", key="update_type")
 edit = st.checkbox("Edit Mode")
-age = st.slider("Maximum age of emails (days)", min_value=0, max_value=365, value=30, key="max_age")
 if edit:
     age = None  # Disable age filter in edit mode
+else:
+    age = st.slider("Maximum age of emails (days)", min_value=0, max_value=365, value=30, key="max_age")
 
 df = data_handler.fetch_database(search_company=st.session_state.get("search_company"), update_type=st.session_state.get("update_type"), max_age=age)
 

@@ -8,6 +8,7 @@ services:
     environment:
       - GENERIC_TIMEZONE=Europe/Berlin
       - TZ=Europe/Berlin
+      # - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY}
       - N8N_SECURE_COOKIE=false
     volumes:
       - n8n_data:/home/node/.n8n
