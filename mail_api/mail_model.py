@@ -74,7 +74,6 @@ If uncertain, return false.
             "Extract the most relevant and recent information from this email regarding the job application."
         )
 
-        print(f"Classifying email")
         response = run_structured_prompt(Updates, prompt=f"Subject: {self.subject}\n\nBody: {self.body}\n\nSender: {self.sender}\n\nDate: {self.date}", instructions=instructions)
 
         return response

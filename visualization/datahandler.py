@@ -57,7 +57,6 @@ class DataHandler:
             )
         df = df.astype(object)  
         df = df.fillna(None)
-        print(df.isna().sum())
 
         response = requests.post(
             API_URL + "/api/save_changes",

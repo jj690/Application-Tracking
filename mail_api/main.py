@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from contextlib import contextmanager
 from mail_model import E_Mail
 from sql_handler import SQLHandler
 import psycopg
@@ -18,6 +19,8 @@ def classify_email_post(email: E_Mail):
         with psycopg.connect(os.getenv("DATABASE_URL")) as db_connection:
             db_handler = SQLHandler(db_connection)
             db_handler.insert_email(classification)
+            return {"classified": "True"}
+    return {"classified": "False"}
 
 
 @app.get("/api/database")

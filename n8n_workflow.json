@@ -1,0 +1,162 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "maxResults": 1,
+        "filters": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -160,
+        -48
+      ],
+      "id": "87f0b2c2-d186-41e2-9cbd-8a271e877162",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "FD6xmsbiyAJmK9xy",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://fastapi-mail-api:8000/api/classify_email",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "sender",
+              "value": "={{ $json.headers.from }}"
+            },
+            {
+              "name": "subject",
+              "value": "={{ $json.subject }}"
+            },
+            {
+              "name": "body",
+              "value": "={{ $json.clean_text }}"
+            },
+            {
+              "name": "date",
+              "value": "={{ $json.date }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        288,
+        48
+      ],
+      "id": "a3c15bc0-f95c-4f08-a536-21732bf446fb",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "jsCode": "function htmlToText(html) {\n  if (!html) return \"\";\n\n  return html\n    // remove scripts/styles\n    .replace(/<script[\\s\\S]*?<\\/script>/gi, \"\")\n    .replace(/<style[\\s\\S]*?<\\/style>/gi, \"\")\n\n    // convert common line breaks/blocks to newlines\n    .replace(/<br\\s*\\/?>/gi, \"\\n\")\n    .replace(/<\\/p>/gi, \"\\n\")\n    .replace(/<\\/div>/gi, \"\\n\")\n    .replace(/<\\/li>/gi, \"\\n\")\n\n    // remove all remaining tags\n    .replace(/<[^>]+>/g, \"\")\n\n    // decode common HTML entities\n    .replace(/&nbsp;/gi, \" \")\n    .replace(/&amp;/gi, \"&\")\n    .replace(/&lt;/gi, \"<\")\n    .replace(/&gt;/gi, \">\")\n    .replace(/&quot;/gi, '\"')\n    .replace(/&#39;/gi, \"'\")\n\n    // clean whitespace\n    .replace(/\\r/g, \"\")\n    .replace(/[ \\t]+/g, \" \")\n    .replace(/\\n\\s*\\n\\s*\\n+/g, \"\\n\\n\")\n    .trim();\n}\n\nreturn $input.all().map(item => {\n  const html =\n    item.json.body_html ||\n    item.json.bodyHtml ||\n    item.json.html ||\n    item.json.body?.html ||\n    \"\";\n\n  return {\n    json: {\n      ...item.json,\n      clean_text: htmlToText(html),\n    },\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        64,
+        48
+      ],
+      "id": "f58b9ecb-1077-439d-96ba-e5aee4afad76",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "maxResults": 1,
+        "filters": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -160,
+        144
+      ],
+      "id": "959e6f00-cf3c-4b7c-80a4-9fd21886a69f",
+      "name": "Gmail Trigger1",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "FD6xmsbiyAJmK9xy",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "19690e1b-7fda-4984-88a6-1cbc4606bba6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "24ac70684d86451587ecf236a873af5a97f7993058e79195a6d5041cf9ed02ed"
+  },
+  "nodeGroups": [],
+  "id": "Nw4ge4xy2TQidKGA",
+  "tags": []
+}
