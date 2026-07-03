@@ -5,14 +5,16 @@ from datahandler import DataHandler
 
 data_handler = DataHandler()
 
+with st.sidebar:
+    st.text_input("Search by Company Name", key="search_company")
+    st.text_input("Search by Update", key="update_type")
+    edit = st.checkbox("Edit Mode")
+    if edit:
+        age = None  # Disable age filter in edit mode
+    else:
+        age = st.slider("Maximum age of emails (days)", min_value=0, max_value=365, value=30, key="max_age")
+
 st.title("Email Database")
-st.text_input("Search by Company Name", key="search_company")
-st.text_input("Search by Update", key="update_type")
-edit = st.checkbox("Edit Mode")
-if edit:
-    age = None  # Disable age filter in edit mode
-else:
-    age = st.slider("Maximum age of emails (days)", min_value=0, max_value=365, value=30, key="max_age")
 
 df = data_handler.fetch_database(search_company=st.session_state.get("search_company"), update_type=st.session_state.get("update_type"), max_age=age)
 
@@ -32,4 +34,9 @@ st.write("Total Emails:", len(df))
 
 fig = data_handler.create_scatter_plot(df)
 st.plotly_chart(fig, width="stretch")
+
+# metrics
+cols = st.columns(2)
+cols[0].metric("Emails", f"{len(df)}",)
+cols[1].metric("Companies", f"{len(df['company_name'].unique())}")
 

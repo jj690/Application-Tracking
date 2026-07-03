@@ -26,6 +26,7 @@ class DataHandler:
 
     @staticmethod
     def create_scatter_plot(df):
+        height = 300 + 20 * len(df["company_name"].unique())
         fig = px.scatter(
             df,
             x="date",
@@ -38,7 +39,7 @@ class DataHandler:
         fig.update_layout(
             xaxis_title="Time",
             yaxis_title="Company",
-            height=500,
+            height=height,
         )
         fig.update_yaxes(
         categoryorder="array",
